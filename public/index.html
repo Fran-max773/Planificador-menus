@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planificador de Menús Semanales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg-circles">
+      <span class="circle c1"></span>
+      <span class="circle c2"></span>
+      <span class="circle c3"></span>
+    </div>
+    <div class="hero-content">
+      <div class="hero-icon">🍽️</div>
+      <h1 class="hero-title">Planificador de Menús</h1>
+      <p class="hero-subtitle">Genera tu menú semanal personalizado con inteligencia artificial</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- FORM SECTION -->
+    <section id="formSection" class="form-section">
+      <div class="form-card">
+        <h2 class="form-title">Cuéntanos tus preferencias</h2>
+
+        <form id="menuForm" novalidate>
+
+          <!-- Personas -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">👥</span> Número de personas
+            </label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" id="decreaseBtn" aria-label="Reducir">−</button>
+              <span class="stepper-value" id="personasDisplay">2</span>
+              <button type="button" class="stepper-btn" id="increaseBtn" aria-label="Aumentar">+</button>
+            </div>
+            <input type="hidden" id="personasInput" value="2" />
+          </div>
+
+          <!-- Restricciones -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🥗</span> Restricciones alimentarias
+              <span class="badge-optional">Opcional</span>
+            </label>
+            <div class="chips-group">
+              <label class="chip chip-all">
+                <input type="checkbox" name="restricciones" value="sin_restricciones" id="sinRestriccionesChip" />
+                <span>🍽️ Sin restricciones alimentarias</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="restricciones" value="vegetariano" />
+                <span>🌿 Vegetariano</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="restricciones" value="vegano" />
+                <span>🌱 Vegano</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="restricciones" value="sin gluten" />
+                <span>🌾 Sin Gluten</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="restricciones" value="sin lactosa" />
+                <span>🥛 Sin Lactosa</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Presupuesto -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">💰</span> Presupuesto aproximado
+            </label>
+            <div class="option-cards" id="presupuestoGroup">
+              <label class="option-card">
+                <input type="radio" name="presupuesto" value="bajo" />
+                <div class="option-inner">
+                  <span class="opt-icon">🟢</span>
+                  <span class="opt-name">Bajo</span>
+                  <span class="opt-desc">Económico y nutritivo</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="presupuesto" value="medio" />
+                <div class="option-inner">
+                  <span class="opt-icon">🟡</span>
+                  <span class="opt-name">Medio</span>
+                  <span class="opt-desc">Equilibrado y variado</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="presupuesto" value="alto" />
+                <div class="option-inner">
+                  <span class="opt-icon">🟠</span>
+                  <span class="opt-name">Alto</span>
+                  <span class="opt-desc">Premium y exclusivo</span>
+                </div>
+              </label>
+            </div>
+            <p class="field-error hidden" id="errorPresupuesto">Selecciona un presupuesto</p>
+          </div>
+
+          <!-- Cocina -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🌍</span> Tipo de cocina
+            </label>
+            <div class="option-cards cuisine-grid" id="cocinaGroup">
+              <label class="option-card">
+                <input type="radio" name="cocina" value="mediterranea" />
+                <div class="option-inner">
+                  <span class="opt-icon">🫒</span>
+                  <span class="opt-name">Mediterránea</span>
+                  <span class="opt-desc">Aceite, legumbres, pescado</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="cocina" value="asiatica" />
+                <div class="option-inner">
+                  <span class="opt-icon">🍜</span>
+                  <span class="opt-name">Asiática</span>
+                  <span class="opt-desc">Arroz, especias, umami</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="cocina" value="internacional" />
+                <div class="option-inner">
+                  <span class="opt-icon">✈️</span>
+                  <span class="opt-name">Internacional</span>
+                  <span class="opt-desc">Fusión y world food</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="cocina" value="variada" />
+                <div class="option-inner">
+                  <span class="opt-icon">🌈</span>
+                  <span class="opt-name">Variada</span>
+                  <span class="opt-desc">Mezcla de todo</span>
+                </div>
+              </label>
+            </div>
+            <p class="field-error hidden" id="errorCocina">Selecciona un tipo de cocina</p>
+          </div>
+
+          <!-- Preferencias extra (formulario inicial) -->
+          <div class="form-group">
+            <label class="form-label" for="preferenciasForm">
+              <span class="label-icon">✏️</span> Otras preferencias
+              <span class="badge-optional">Opcional</span>
+            </label>
+            <textarea
+              id="preferenciasForm"
+              class="textarea-field"
+              rows="3"
+              placeholder="Ej: sin almuerzo, sin merienda, incluir recetas rápidas, evitar mariscos…"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" id="submitBtn">
+            ✨ Generar mi menú semanal
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- LOADING -->
+    <section id="loadingSection" class="loading-section hidden">
+      <div class="loading-card">
+        <div class="loading-ring">
+          <div></div><div></div><div></div><div></div>
+        </div>
+        <h3>Preparando tu menú personalizado…</h3>
+        <p>Nuestro chef IA está creando recetas perfectas para ti</p>
+        <div class="loading-tip-box">
+          <span id="loadingTip">🧑‍🍳 Analizando tus preferencias…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU RESULT -->
+    <section id="menuSection" class="menu-section hidden">
+
+      <!-- Cabecera de resultado -->
+      <div class="result-header">
+        <div class="result-info" id="resultInfo"></div>
+        <button class="btn-back" id="backToFormBtn">← Cambiar preferencias</button>
+      </div>
+
+      <!-- Regenerar -->
+      <div class="regen-card">
+        <div class="regen-top">
+          <div>
+            <h3>¿No te convence el menú?</h3>
+            <p>Añade instrucciones específicas y genera uno nuevo</p>
+          </div>
+        </div>
+        <div class="regen-bottom">
+          <textarea
+            id="preferenciasRegen"
+            class="textarea-regen"
+            rows="2"
+            placeholder="Ej: sin almuerzo, más vegetales, incluir sopas, sin fritos…"
+          ></textarea>
+          <button class="btn-regen" id="regenBtn">🔄 Generar nuevo menú</button>
+        </div>
+      </div>
+
+      <!-- Hint -->
+      <p class="click-hint">💡 Haz clic en cualquier plato para ver ingredientes, precios y preparación detallada</p>
+
+      <!-- Grid de días -->
+      <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Planificador de Menús · Generado con IA · OpenAI GPT-4o mini</p>
+  </footer>
+
+  <!-- Modal detalle de plato -->
+  <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modal" class="modal">
+      <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
+      <div id="modalHeader" class="modal-header">
+        <div class="modal-header-top">
+          <span id="modalIcon" class="modal-icon"></span>
+          <div>
+            <div id="modalMealType" class="modal-meal-type-label"></div>
+            <div id="modalDay" class="modal-day-label"></div>
+          </div>
+        </div>
+        <h2 id="modalTitle" class="modal-title"></h2>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
