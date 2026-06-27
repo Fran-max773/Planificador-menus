@@ -596,6 +596,7 @@ body {
   border-radius: var(--radius-sm);
   padding: 14px 18px;
   margin-top: 24px;
+  margin-bottom: 32px;
 }
 
 .health-notice-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
