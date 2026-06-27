@@ -33,6 +33,82 @@
 
         <form id="menuForm" novalidate>
 
+          <!-- Perfil -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">👤</span> ¿Cuál es tu perfil?
+            </label>
+            <div class="option-cards profile-grid" id="perfilGroup">
+              <label class="option-card">
+                <input type="radio" name="perfil" value="ninguno" checked />
+                <div class="option-inner">
+                  <span class="opt-icon">🎯</span>
+                  <span class="opt-name">Sin perfil</span>
+                  <span class="opt-desc">Completamente personalizado</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="perfil" value="estudiante" />
+                <div class="option-inner">
+                  <span class="opt-icon">🎓</span>
+                  <span class="opt-name">Estudiante</span>
+                  <span class="opt-desc">Sencillo y económico</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="perfil" value="deportista" />
+                <div class="option-inner">
+                  <span class="opt-icon">🏋️</span>
+                  <span class="opt-name">Deportista</span>
+                  <span class="opt-desc">Con objetivos calóricos</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="perfil" value="mayor" />
+                <div class="option-inner">
+                  <span class="opt-icon">🌿</span>
+                  <span class="opt-name">Persona mayor</span>
+                  <span class="opt-desc">Suave y nutritivo</span>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="perfil" value="trabajador" />
+                <div class="option-inner">
+                  <span class="opt-icon">⚡</span>
+                  <span class="opt-name">Poco tiempo</span>
+                  <span class="opt-desc">Recetas rápidas</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Extra: Deportista -->
+            <div class="profile-extra hidden" id="extraDeportista">
+              <div class="extra-grid">
+                <div>
+                  <label class="extra-label" for="caloriasInput">🔥 Calorías diarias objetivo (kcal)</label>
+                  <input type="number" id="caloriasInput" class="extra-input"
+                         min="1200" max="6000" placeholder="Ej: 2500" />
+                </div>
+                <div>
+                  <label class="extra-label" for="alimentosEvitarInput">🚫 Alimentos a evitar</label>
+                  <input type="text" id="alimentosEvitarInput" class="extra-input"
+                         placeholder="Ej: nueces, marisco, brócoli…" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Extra: Poco tiempo -->
+            <div class="profile-extra hidden" id="extraTrabajador">
+              <label class="extra-label">⏱️ Tiempo máximo de preparación por plato</label>
+              <div class="chips-group" style="margin-top:10px">
+                <label class="chip"><input type="radio" name="tiempoMax" value="15" /><span>15 min</span></label>
+                <label class="chip"><input type="radio" name="tiempoMax" value="20" /><span>20 min</span></label>
+                <label class="chip"><input type="radio" name="tiempoMax" value="30" checked /><span>30 min</span></label>
+                <label class="chip"><input type="radio" name="tiempoMax" value="45" /><span>45 min</span></label>
+              </div>
+            </div>
+          </div>
+
           <!-- Personas -->
           <div class="form-group">
             <label class="form-label">
@@ -196,7 +272,25 @@
         <button class="btn-back" id="backToFormBtn">← Cambiar preferencias</button>
       </div>
 
-      <!-- Regenerar -->
+      <!-- Guardar menú -->
+      <div class="save-bar">
+        <div class="save-bar-text">
+          <span class="save-bar-icon">💾</span>
+          <div>
+            <strong>¿Te gusta este menú?</strong>
+            <span>Guárdalo para acceder a él cuando quieras</span>
+          </div>
+        </div>
+        <button class="btn-save" id="saveMenuBtn">Guardar menú</button>
+      </div>
+
+      <!-- Hint -->
+      <p class="click-hint">💡 <strong>Haz clic</strong> en cualquier plato para ver ingredientes, precios y preparación detallada</p>
+
+      <!-- Grid de días -->
+      <div class="menu-grid" id="menuGrid"></div>
+
+      <!-- Regenerar (al final, tras examinar el menú) -->
       <div class="regen-card">
         <div class="regen-top">
           <div>
@@ -214,12 +308,6 @@
           <button class="btn-regen" id="regenBtn">🔄 Generar nuevo menú</button>
         </div>
       </div>
-
-      <!-- Hint -->
-      <p class="click-hint">💡 Haz clic en cualquier plato para ver ingredientes, precios y preparación detallada</p>
-
-      <!-- Grid de días -->
-      <div class="menu-grid" id="menuGrid"></div>
     </section>
 
   </main>
@@ -227,6 +315,50 @@
   <footer class="footer">
     <p>Planificador de Menús · Generado con IA · OpenAI GPT-4o mini</p>
   </footer>
+
+  <!-- FAB: Mis menús guardados -->
+  <button class="fab" id="fabBtn" title="Mis menús guardados">
+    📂
+    <span class="fab-badge hidden" id="fabBadge">0</span>
+  </button>
+
+  <!-- Modal: nombre del menú -->
+  <div class="save-modal-overlay hidden" id="saveModalOverlay">
+    <div class="save-modal">
+      <h3>💾 Guardar menú</h3>
+      <p>Ponle un nombre para identificarlo fácilmente</p>
+      <input type="text" id="menuNameInput" class="save-modal-input"
+             placeholder="Ej: Menú mediterráneo de verano" maxlength="60" />
+      <div class="save-modal-actions">
+        <button class="sm-btn-cancel" id="saveModalCancel">Cancelar</button>
+        <button class="sm-btn-confirm" id="saveModalConfirm">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: progreso de generación de detalles -->
+  <div class="progress-modal-overlay hidden" id="progressModalOverlay">
+    <div class="progress-modal">
+      <div class="loading-ring"><div></div><div></div><div></div><div></div></div>
+      <h3>Guardando menú completo…</h3>
+      <p>Generando los detalles de cada plato. Esto tardará unos segundos.</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div>
+      </div>
+      <span class="progress-text" id="progressText">0 / 35 platos</span>
+    </div>
+  </div>
+
+  <!-- Drawer: menús guardados -->
+  <div class="drawer-overlay hidden" id="drawerOverlay">
+    <div class="drawer" id="drawer">
+      <div class="drawer-header">
+        <h3>📂 Mis menús guardados</h3>
+        <button class="drawer-close" id="drawerClose">✕</button>
+      </div>
+      <div class="drawer-body" id="drawerBody"></div>
+    </div>
+  </div>
 
   <!-- Modal detalle de plato -->
   <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">

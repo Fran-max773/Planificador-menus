@@ -24,8 +24,48 @@ const COCINA_MAP = {
   variada: 'variada (mezcla equilibrada de todos los estilos culinarios)',
 };
 
+const PERFIL_PROMPTS = {
+  estudiante: () => `
+PERFIL DEL USUARIO: Estudiante universitario con poca experiencia cocinando
+- Recetas MUY SENCILLAS: máximo 4-5 ingredientes por plato
+- Solo técnicas básicas: hervir, freír en sartén, horno a temperatura fija, microondas
+- Tiempo de preparación máximo 30 minutos por plato
+- Ingredientes fáciles de encontrar en cualquier supermercado
+- Platos económicos, rendidores y fáciles de llevar en táper`,
+
+  deportista: ({ calorias, alimentosEvitar }) => `
+PERFIL DEL USUARIO: Deportista con objetivos calóricos específicos
+- Calorías diarias OBJETIVO: ${calorias || 2500} kcal
+- Distribución calórica: Desayuno ~20%, Almuerzo ~10%, Comida ~35%, Merienda ~15%, Cena ~20%
+- Alto en proteínas de calidad (pollo, huevo, legumbres, atún, pavo, queso cottage)
+- Carbohidratos complejos (avena, arroz integral, pasta, boniato, pan integral)
+- Grasas saludables (aguacate, frutos secos, aceite de oliva, salmón)
+${alimentosEvitar ? `- Alimentos a EVITAR ESTRICTAMENTE: ${alimentosEvitar}` : ''}
+- Menú diseñado para rendimiento deportivo y recuperación muscular`,
+
+  mayor: () => `
+PERFIL DEL USUARIO: Persona mayor con necesidades dietéticas específicas
+- Recetas de fácil digestión y masticación (sin alimentos muy duros o crudos en exceso)
+- Rico en calcio, vitamina D, potasio, fibra y antioxidantes
+- Sin picante ni condimentos fuertes
+- Porciones moderadas y equilibradas
+- Preparaciones tradicionales: cocidos, estofados, al horno, a la plancha
+- Evitar frituras abundantes y ultraprocesados
+- Priorizar verduras cocinadas, legumbres, pescado y lácteos`,
+
+  trabajador: ({ tiempoMax }) => `
+PERFIL DEL USUARIO: Persona con muy poco tiempo para cocinar
+- Tiempo MÁXIMO de preparación por plato: ${tiempoMax || 30} minutos
+- Priorizar recetas de un solo recipiente (olla, sartén, bandeja de horno)
+- Platos que se puedan preparar con antelación (batch cooking) y duran varios días
+- Ingredientes que se compran una vez a la semana y se conservan bien
+- Platos que se puedan calentar en microondas o comer fríos
+- Nutritivos, energéticos y saciantes a pesar de su sencillez`,
+};
+
 app.post('/api/generate-menu', async (req, res) => {
-  const { personas, restricciones, presupuesto, cocina, preferenciasExtra } = req.body;
+  const { personas, restricciones, presupuesto, cocina, preferenciasExtra,
+          perfil, calorias, alimentosEvitar, tiempoMax } = req.body;
 
   if (!personas || !presupuesto || !cocina) {
     return res.status(400).json({ error: 'Faltan datos obligatorios.' });
@@ -40,6 +80,10 @@ app.post('/api/generate-menu', async (req, res) => {
       ? restricciones.join(', ')
       : 'ninguna';
 
+  const perfilText = perfil && perfil !== 'ninguno' && PERFIL_PROMPTS[perfil]
+    ? PERFIL_PROMPTS[perfil]({ calorias, alimentosEvitar, tiempoMax })
+    : '';
+
   const prompt = `Eres un chef y nutricionista experto. Genera un menú semanal completo y detallado.
 
 PARÁMETROS:
@@ -48,7 +92,7 @@ PARÁMETROS:
 - Presupuesto: ${PRESUPUESTO_MAP[presupuesto] || presupuesto}
 - Tipo de cocina: ${COCINA_MAP[cocina] || cocina}
 ${preferenciasExtra ? `- Requisitos adicionales: ${preferenciasExtra}` : ''}
-
+${perfilText}
 INSTRUCCIONES:
 - Genera exactamente 7 días (Lunes a Domingo)
 - Cada día debe incluir: desayuno, almuerzo, comida, merienda y cena
@@ -56,6 +100,7 @@ INSTRUCCIONES:
 - Los platos deben ser variados a lo largo de la semana (no repetir el mismo plato)
 - Respeta ESTRICTAMENTE todas las restricciones alimentarias indicadas
 - Adapta las porciones y cantidades al número de personas
+${perfilText ? '- Cumple OBLIGATORIAMENTE todas las indicaciones del perfil del usuario' : ''}
 ${preferenciasExtra ? `- Cumple OBLIGATORIAMENTE los requisitos adicionales: ${preferenciasExtra}` : ''}
 
 Responde ÚNICAMENTE con un objeto JSON válido con esta estructura exacta (sin texto adicional):
