@@ -64,7 +64,7 @@ PERFIL DEL USUARIO: Persona con muy poco tiempo para cocinar
 };
 
 app.post('/api/generate-menu', async (req, res) => {
-  const { personas, restricciones, presupuesto, cocina, preferenciasExtra,
+  const { personas, restricciones, alergias, presupuesto, cocina, preferenciasExtra,
           perfil, calorias, alimentosEvitar, tiempoMax } = req.body;
 
   if (!personas || !presupuesto || !cocina) {
@@ -80,6 +80,11 @@ app.post('/api/generate-menu', async (req, res) => {
       ? restricciones.join(', ')
       : 'ninguna';
 
+  const alergiasText =
+    alergias && alergias.length > 0
+      ? alergias.join(', ')
+      : null;
+
   const perfilText = perfil && perfil !== 'ninguno' && PERFIL_PROMPTS[perfil]
     ? PERFIL_PROMPTS[perfil]({ calorias, alimentosEvitar, tiempoMax })
     : '';
@@ -93,12 +98,18 @@ PARÁMETROS:
 - Tipo de cocina: ${COCINA_MAP[cocina] || cocina}
 ${preferenciasExtra ? `- Requisitos adicionales: ${preferenciasExtra}` : ''}
 ${perfilText}
+${alergiasText ? `
+⚠️ ALERGIAS ALIMENTARIAS DEL USUARIO — SEGURIDAD CRÍTICA, NO NEGOCIABLE:
+El usuario tiene alergia o intolerancia a: ${alergiasText}.
+Estos ingredientes y CUALQUIER fuente oculta o derivado de ellos (p.ej. trazas, salsas, caldos, rebozados, aditivos, ingredientes secundarios) deben quedar TOTALMENTE EXCLUIDOS de absolutamente todos los platos del menú. Esto no es una preferencia sino una restricción de salud: una infracción puede causar una reacción alérgica grave. Ante cualquier duda sobre si un plato podría contener trazas de estos alérgenos, elige una alternativa segura.
+` : ''}
 INSTRUCCIONES:
 - Genera exactamente 7 días (Lunes a Domingo)
 - Cada día debe incluir: desayuno, almuerzo, comida, merienda y cena
 - Sé específico: nombra cada plato e indica los ingredientes principales
 - Los platos deben ser variados a lo largo de la semana (no repetir el mismo plato)
 - Respeta ESTRICTAMENTE todas las restricciones alimentarias indicadas
+${alergiasText ? '- Las ALERGIAS indicadas tienen prioridad absoluta sobre cualquier otro criterio, incluido presupuesto, tipo de cocina y preferencias adicionales' : ''}
 - Adapta las porciones y cantidades al número de personas
 ${perfilText ? '- Cumple OBLIGATORIAMENTE todas las indicaciones del perfil del usuario' : ''}
 ${preferenciasExtra ? `- Cumple OBLIGATORIAMENTE los requisitos adicionales: ${preferenciasExtra}` : ''}

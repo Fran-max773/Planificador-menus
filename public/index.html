@@ -152,6 +152,37 @@
             </div>
           </div>
 
+          <!-- Alergias -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">⚠️</span> Alergias e intolerancias
+              <span class="badge-optional">Opcional</span>
+            </label>
+            <div class="chips-group" id="alergiasGroup">
+              <label class="chip"><input type="checkbox" name="alergias" value="gluten" /><span>🌾 Gluten</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="crustáceos" /><span>🦐 Crustáceos</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="huevo" /><span>🥚 Huevo</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="pescado" /><span>🐟 Pescado</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="cacahuetes" /><span>🥜 Cacahuetes</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="soja" /><span>🫘 Soja</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="lácteos" /><span>🥛 Lácteos</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="frutos de cáscara" /><span>🌰 Frutos de cáscara</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="apio" /><span>🥬 Apio</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="mostaza" /><span>🟡 Mostaza</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="sésamo" /><span>⚪ Sésamo</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="sulfitos" /><span>🍷 Sulfitos</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="altramuces" /><span>🫛 Altramuces</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="moluscos" /><span>🐚 Moluscos</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="fructosa" /><span>🍎 Fructosa</span></label>
+              <label class="chip"><input type="checkbox" name="alergias" value="histamina" /><span>🧪 Histamina</span></label>
+            </div>
+            <div class="alergia-add-row">
+              <input type="text" id="alergiaCustomInput" class="extra-input" placeholder="¿No está en la lista? Escribe otra alergia…" maxlength="40" />
+              <button type="button" id="alergiaAddBtn" class="btn-add-chip">+ Añadir</button>
+            </div>
+            <div class="chips-group" id="alergiasCustomGroup" style="margin-top:10px"></div>
+          </div>
+
           <!-- Presupuesto -->
           <div class="form-group">
             <label class="form-label">

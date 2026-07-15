@@ -64,6 +64,53 @@ otherChips.forEach(cb => {
   });
 });
 
+/* ─── Alergias personalizadas ─────────────────────────────────────────── */
+let customAlergias = [];
+const alergiaCustomInput   = document.getElementById('alergiaCustomInput');
+const alergiasCustomGroup  = document.getElementById('alergiasCustomGroup');
+
+function renderCustomAlergiaChips() {
+  alergiasCustomGroup.innerHTML = customAlergias.map((a, i) => `
+    <span class="chip-custom">
+      <span>⚠️ ${escapeHTML(a)}</span>
+      <span class="chip-remove" data-index="${i}" title="Quitar">✕</span>
+    </span>
+  `).join('');
+}
+
+function addCustomAlergia() {
+  const value = alergiaCustomInput.value.trim();
+  if (!value) return;
+
+  const existing = [
+    ...Array.from(document.querySelectorAll('input[name="alergias"]:checked')).map(cb => cb.value),
+    ...customAlergias,
+  ].map(v => v.toLowerCase());
+
+  if (existing.includes(value.toLowerCase())) {
+    showToast('Ya has añadido esa alergia', 'error');
+    return;
+  }
+
+  customAlergias.push(value);
+  renderCustomAlergiaChips();
+  alergiaCustomInput.value = '';
+  alergiaCustomInput.focus();
+}
+
+document.getElementById('alergiaAddBtn').addEventListener('click', addCustomAlergia);
+alergiaCustomInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); addCustomAlergia(); }
+});
+
+alergiasCustomGroup.addEventListener('click', (e) => {
+  const btn = e.target.closest('.chip-remove');
+  if (!btn) return;
+  const idx = parseInt(btn.dataset.index, 10);
+  customAlergias.splice(idx, 1);
+  renderCustomAlergiaChips();
+});
+
 /* ─── Loading tips ────────────────────────────────────────────────────── */
 const TIPS = [
   '🧑‍🍳 Analizando tus preferencias…',
@@ -120,6 +167,11 @@ menuForm.addEventListener('submit', (e) => {
   ).map(cb => cb.value)
   .filter(v => v !== 'sin_restricciones');
 
+  const alergias = [
+    ...Array.from(document.querySelectorAll('input[name="alergias"]:checked')).map(cb => cb.value),
+    ...customAlergias,
+  ];
+
   const perfil         = document.querySelector('input[name="perfil"]:checked')?.value || 'ninguno';
   const calorias       = document.getElementById('caloriasInput')?.value || '';
   const alimentosEvitar = document.getElementById('alimentosEvitarInput')?.value.trim() || '';
@@ -128,6 +180,7 @@ menuForm.addEventListener('submit', (e) => {
   savedFormData = {
     personas:         parseInt(personasInput.value),
     restricciones,
+    alergias,
     presupuesto,
     cocina,
     perfil,
@@ -212,6 +265,7 @@ function renderMenu(data, reqData) {
     PRESUPUESTO_LABEL[reqData.presupuesto] || reqData.presupuesto,
     COCINA_LABEL[reqData.cocina] || reqData.cocina,
     ...(reqData.restricciones || []).map(r => `✅ ${r}`),
+    ...(reqData.alergias || []).map(a => `⚠️ ${escapeHTML(a)}`),
     reqData.calorias ? `🔥 ${reqData.calorias} kcal/día` : null,
     reqData.tiempoMax ? `⏱️ Máx. ${reqData.tiempoMax} min` : null,
   ].filter(Boolean);
@@ -559,6 +613,7 @@ function renderDrawer() {
       PRESUPUESTO_LABEL[m.formData?.presupuesto] ?? '',
       COCINA_LABEL[m.formData?.cocina] ?? '',
       ...(m.formData?.restricciones || []).map(r => `✅ ${r}`),
+      ...(m.formData?.alergias || []).map(a => `⚠️ ${escapeHTML(a)}`),
     ].filter(Boolean);
 
     return `
@@ -631,6 +686,7 @@ function buildDownloadHTML({ name, savedAt, formData, menu, details }) {
     formData?.presupuesto ? `💰 Presupuesto ${formData.presupuesto}` : '',
     formData?.cocina ? `🌍 Cocina ${formData.cocina}` : '',
     ...(formData?.restricciones || []).map(r => `✅ ${r}`),
+    ...(formData?.alergias || []).map(a => `⚠️ ${escapeHTML(a)}`),
   ].filter(Boolean).map(t => `<span class="tag">${t}</span>`).join('');
 
   const daysHTML = menu.dias.map((dia, di) => {
