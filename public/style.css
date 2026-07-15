@@ -1109,6 +1109,8 @@ body {
 
 .fab:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(44,122,75,0.55); }
 
+.fab-home { bottom: 104px; }
+
 .fab-badge {
   position: absolute;
   top: -4px;

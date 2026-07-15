@@ -200,11 +200,24 @@ document.getElementById('regenBtn').addEventListener('click', () => {
 });
 
 /* ─── Back to form ────────────────────────────────────────────────────── */
-document.getElementById('backToFormBtn').addEventListener('click', () => {
+const fabHomeBtn = document.getElementById('fabHomeBtn');
+
+function goToForm() {
   menuSection.classList.add('hidden');
   formSection.classList.remove('hidden');
+  fabHomeBtn.classList.add('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+}
+
+document.getElementById('backToFormBtn').addEventListener('click', goToForm);
+fabHomeBtn.addEventListener('click', goToForm);
+
+/* Solo mostrar el FAB de inicio cuando "Cambiar preferencias" ha salido de la vista */
+const resultHeaderEl = document.querySelector('.result-header');
+new IntersectionObserver(([entry]) => {
+  if (menuSection.classList.contains('hidden')) return;
+  fabHomeBtn.classList.toggle('hidden', entry.isIntersecting);
+}).observe(resultHeaderEl);
 
 /* ─── Generate menu ───────────────────────────────────────────────────── */
 async function generateMenu(data) {
